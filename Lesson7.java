@@ -10,14 +10,23 @@ package com.company;
 public class Lesson7 {
 
     public static void main(String[] args) {
-        Cat cat = new Cat("Barsik", 60, false);
-        Plate plate = new Plate(50);
-        System.out.println(plate);
-        cat.eat(plate);
+        Cat[] cat = new Cat[]{new Cat("Barsik", 10, false),
+                new Cat("Samson", 10, false),
+                new Cat("Murzik", 10, false),
+                new Cat("Zevs", 10, false),
+                new Cat("Kuzya", 20, false)
+        };
 
+        Plate plate = new Plate(50, 100);
         System.out.println(plate);
-        System.out.println(cat);
-    }
+        for (Cat currentСat : cat) {
+            currentСat.eat(plate);
+            System.out.println(currentСat);
+        }
+        System.out.println(plate);
+        plate.addFood(40);
+        System.out.println(plate);
+  }
 }
 
 class Cat {
@@ -53,18 +62,28 @@ class Cat {
 
 class Plate {
     private int food;
+    private int capacity; //емкость тарелки
     boolean enoughFood = false;
 
-    Plate(int food) {
+    Plate(int food, int capacity) {
         this.food = food;
+        this.capacity = capacity;
     }
 
     boolean dicreaseFood(int food) {
+        enoughFood = false;
         if (this.food >= food) {
             this.food -= food;
             enoughFood = true;
-        } else System.out.println("Not enough food. Appetite: " + food);
+        } else System.out.println("Not enough food. Appetite for the next cat: " + food);
         return enoughFood;
+    }
+
+    void addFood(int food){
+        int raz = capacity - this.food;
+       if (food<=raz) {
+           this.food += food;
+       } else this.food += (raz);
     }
 
     @Override
