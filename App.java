@@ -1,55 +1,48 @@
 /**
- * JavaCore. Level 1. Lesson 2. Example of homework
+ * JavaCore. Level 1. Lesson 3. Example of homework
  *
  * @author Alina Rakhimova
- * @version dated June 03, 2018
+ * @version dated June 05, 2018
  * @link https://github.com/AlinaRakhimova
  */
 
 package ru.rakhimova.javacore;
 
-import ru.rakhimova.javacore.exception.MyArrayDataException;
-import ru.rakhimova.javacore.exception.MyArraySizeException;
+import ru.rakhimova.javacore.entity.Phonebook;
 
-public class App {
-    final static int SIZE = 4;
+import java.util.*;
 
-    public static void main(String[] args){
-        final String[][] arrayString = new String[SIZE][SIZE];
-        arrayString[0][0] = "2";
-        arrayString[0][1] = "yes";
-        arrayString[0][2] = "1";
-        arrayString[0][3] = "1";
-        arrayString[1][0] = "1";
-        arrayString[1][1] = "1";
-        arrayString[1][2] = "1";
-        arrayString[1][3] = "1";
-        arrayString[2][0] = "1";
-        arrayString[2][1] = "1";
-        arrayString[2][2] = "1";
-        arrayString[2][3] = "2";
-        arrayString[3][0] = "1";
-        arrayString[3][1] = "1";
-        arrayString[3][2] = "1";
-        arrayString[3][3] = "1";
-        try{
-            System.out.println(stringToInt(arrayString));
-        }  catch (MyArrayDataException exception) {
-            System.out.println(exception.getMessage());
-        } catch (MyArraySizeException exception) {
-            System.out.println("Ошибка размера массива: " + exception.getStackTrace());
-        }
-    }
+public class App
+{
+    public static void main( String[] args )
+    {
+        HashSet<String> worlds = new HashSet<String>();
+        worlds.add("book");
+        worlds.add("book");
+        worlds.add("table");
+        worlds.add("sun");
+        worlds.add("sunset");
+        worlds.add("push");
+        worlds.add("main");
+        worlds.add("book");
+        worlds.add("bus");
+        worlds.add("sun");
 
-    public static int stringToInt(String[][] arrayString) throws MyArrayDataException, MyArraySizeException {
-        int count = 0;
-        if (arrayString.length != SIZE) throw new MyArraySizeException();
-        for (int i=0; i<SIZE; i++) {
-            for (int j=0; j<SIZE; j++){
-                if (!arrayString[i][j].matches("\\d+")) throw new MyArrayDataException(i,j);
-                count =  Integer.parseInt(arrayString[i][j]) + count;
-            }
-        }
-        return count;
+        System.out.println(worlds);
+
+
+
+
+        List<Phonebook> pb = new ArrayList<Phonebook>();
+        pb.add(new Phonebook("Ivanov", "5632123"));
+        pb.add(new Phonebook("Petrov", "4545151"));
+        pb.add(new Phonebook("Vasilev", "7899898"));
+        pb.add(new Phonebook("Ivanov", "1245689"));
+        pb.add(new Phonebook("Mikulin", "2567889"));
+        pb.add(new Phonebook("Kulikov", "7414578"));
+
+
+        //System.out.println("New Germany Entry: " + pb.get("Germany"));
+
     }
 }
