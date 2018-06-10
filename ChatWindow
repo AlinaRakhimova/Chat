@@ -1,0 +1,54 @@
+package ru.rakhimova.javacore;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class ChatWindow extends JDialog {
+    private JPanel contentPane;
+    private JButton buttonSend;
+    private JTextArea textAreaMessage;
+    private JTextField textMessage;
+    private JScrollPane scrollTextArea;
+
+    public ChatWindow() {
+        setContentPane(contentPane);
+        setModal(true);
+        getRootPane().setDefaultButton(buttonSend);
+
+        buttonSend.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onSend();
+            }
+        });
+
+        // call onCancel() when cross is clicked
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                onCancel();
+            }
+        });
+
+        // call onCancel() on ESCAPE
+        contentPane.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+    }
+
+    private void onSend() {
+        String author = "Author";
+        if (!textMessage.getText().trim().isEmpty()) {
+            textAreaMessage.append(author + ": " +textMessage.getText() + "\n");
+            textMessage.setText("");
+        }
+    }
+
+    private void onCancel() {
+        dispose();
+    }
+
+}
