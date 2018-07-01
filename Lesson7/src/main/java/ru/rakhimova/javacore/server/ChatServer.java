@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class ChatServer {
 
-    private final int SERVER_PORT = 1111;
+    private final int SERVER_PORT = 9090;
     private static final Logger LOGGER = Logger.getLogger(ChatServer.class.getSimpleName());
     private static ServerSocket serverSocket = null;
     private static Socket socket = null;
@@ -44,7 +44,7 @@ public class ChatServer {
 
         for (ClientHandler o : clients) {
             if (user.equals(o.getName())) {
-                o.sendMsg(userFrom.getName() + ": " + msg);
+                o.sendMsg("private from user " + userFrom.getName() + ": " + msg);
                 userFrom.sendMsg("private to user " + user + ": " + msg);
                 return;
             }
@@ -76,7 +76,9 @@ public class ChatServer {
 
     public synchronized void unsubscribe(ClientHandler o) {
         clients.remove(o);
-        broadcastClientList();
+        if (!clients.isEmpty()) {
+            broadcastClientList();
+        }
     }
 
     public synchronized void subscribe(ClientHandler o) {

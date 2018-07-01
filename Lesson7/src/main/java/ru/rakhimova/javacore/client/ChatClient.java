@@ -1,7 +1,6 @@
 package ru.rakhimova.javacore.client;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,7 +12,7 @@ public class ChatClient extends JDialog {
     private static final String SERVER_ADDR = "localhost";
     private static final String END = "/end";
     private static final String AUTH = "/auth";
-    private static final int SERVER_PORT = 1111;
+    private static final int SERVER_PORT = 9090;
     private static final Logger LOGGER = Logger.getLogger(ChatClient.class.getSimpleName());
     private JPanel contentPane;
     private JButton buttonSend;
@@ -48,22 +47,32 @@ public class ChatClient extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        signInButton.addActionListener(e -> onAuthClick());
+
+        connectionToServer();
+
+        Thread t = new Thread(new RunnableClassChatClient());
+        t.start();
+    }
+
+    public void connectionToServer() {
         try {
             socketClient = new Socket(SERVER_ADDR, SERVER_PORT);
             in = new DataInputStream(socketClient.getInputStream());
             out = new DataOutputStream(socketClient.getOutputStream());
-            //setAuthorized(false);
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
-        Thread t = new Thread(new RunnableClassChatClient());
-        t.start();
-
-        signInButton.addActionListener(e -> onAuthClick());
     }
 
     private void onCancel() {
-        dispose();
+        try {
+            out.writeUTF(END);
+            out.flush();
+            dispose();
+        } catch (IOException e) {
+            LOGGER.severe(e.getMessage());
+        }
     }
 
     public void sendMsg() {
@@ -73,7 +82,6 @@ public class ChatClient extends JDialog {
                 out.writeUTF(textMessage.getText());
                 out.flush();
                 textMessage.setText("");
-                //System.out.println("Отправка с клиента удалась");
             }
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
@@ -83,8 +91,6 @@ public class ChatClient extends JDialog {
     public void onAuthClick() {
         try {
             out.writeUTF(AUTH + " " + textFieldLogin.getText() + " " + textFieldPassword.getText());
-           // textFieldLogin.setText("");
-           // textFieldPassword.setText("");
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
         }
@@ -95,22 +101,13 @@ public class ChatClient extends JDialog {
         @Override
         public void run() {
             try {
-                while (!socketClient.isOutputShutdown()) {
-                    String str = in.readUTF();
-                    //System.out.println("Прочитано на клиенте: " + str);
-                    if (str.equals(END)) {
-                        break;
-                    }
-                    textAreaMessage.append(str + "\n");
+                while (!socketClient.isClosed()) {
+                    String str = null;
+                    if (in.available() > 0) str = in.readUTF();
+                    if (str != null) textAreaMessage.append(str + "\n");
                 }
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
-            } finally {
-                try {
-                    socketClient.close();
-                } catch (IOException e) {
-                    LOGGER.severe(e.getMessage());
-                }
             }
         }
     }
