@@ -5,9 +5,9 @@ public class User {
     private int hashPassword;
     private String nick;
 
-    public User(String login, int password, String nick) {
+    public User(String login, int hashPassword, String nick) {
         this.login = login;
-        this.hashPassword = password;
+        this.hashPassword = hashPassword;
         this.nick = nick;
     }
 

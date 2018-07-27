@@ -25,6 +25,7 @@ public class ChatClient extends JDialog {
     private JLabel labelLogin;
     private JLabel labelPassword;
     private JButton signInButton;
+    private JButton signUpButton;
     private Socket socketClient;
     private DataInputStream in;
     private DataOutputStream out;
@@ -48,6 +49,17 @@ public class ChatClient extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         signInButton.addActionListener(e -> onAuthClick());
+
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SignUpWindow signUpWindow = new SignUpWindow();
+                signUpWindow.startSignUpWindow();
+                signUpWindow.setVisible(true);
+                signUpWindow.setLocationRelativeTo(null);
+                signUpWindow.pack();
+            }
+        });
 
         connectionToServer();
 

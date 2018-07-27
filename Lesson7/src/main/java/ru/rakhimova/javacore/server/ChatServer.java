@@ -1,6 +1,7 @@
 package ru.rakhimova.javacore.server;
 
-import ru.rakhimova.javacore.base.BaseAuthService;
+//import ru.rakhimova.javacore.base.BaseAuthService;
+import ru.rakhimova.javacore.base.DB;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,13 +16,17 @@ public class ChatServer {
     private static ServerSocket serverSocket = null;
     private static Socket socket = null;
     private Set<ClientHandler> clients;
-    private AuthService authService;
+   // private AuthService authService;
+    private DB authServiceDB;
 
     public void startServer() {
         try {
+
             serverSocket = new ServerSocket(SERVER_PORT);
-            authService = new BaseAuthService();
-            authService.start();
+           // authService = new BaseAuthService();
+            authServiceDB = new DB();
+            authServiceDB.start();
+          //  authService.start();
             clients = new HashSet<>();
             System.out.println("Server running, waiting for connection ...");
             while (!serverSocket.isClosed()) {
@@ -86,7 +91,11 @@ public class ChatServer {
         broadcastClientList();
     }
 
-    public AuthService getAuthService() {
-        return authService;
+//    public AuthService getAuthService() {
+//        return authService;
+//    }
+
+    public DB getAuthServiceDB() {
+        return authServiceDB;
     }
 }

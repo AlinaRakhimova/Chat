@@ -14,7 +14,8 @@ public class ClientHandler {
     private static final String AUTHOK = "/authok";
     private static final String AUTH = "/auth";
     private static final String TOUSER = "/w";
-    private static final int TIMEOUT_SEC = 20;
+    private static final String SIGN_UP = "/signUp";
+    private static final int TIMEOUT_SEC = 100;
     private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getSimpleName());
     private ChatServer chatServer;
     private Socket socket;
@@ -59,6 +60,7 @@ public class ClientHandler {
                 if (in.available() > 0) {
                     str = in.readUTF();
                     if (str.startsWith(AUTH)) checkNick(str);
+                    if (str.startsWith(SIGN_UP)) signUpServer(str);
                 }
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
@@ -66,9 +68,20 @@ public class ClientHandler {
         }
     }
 
+    public void signUpServer(String str){
+        System.out.println(str);
+        String[] parts = str.split(" ");
+        String login = parts[1];
+        String password = parts[2];
+        String nick = parts[3];
+        if (!chatServer.isNickBusy(nick)) {
+            if(chatServer.getAuthServiceDB().addAccount(login, password, nick)) System.out.println("Sign UP OK");
+        }
+    }
+
     public void checkNick(String str) {
         String[] parts = str.split(" ");
-        String nick = chatServer.getAuthService().getNickByLoginPassword(parts[1], parts[2].hashCode());
+        String nick = chatServer.getAuthServiceDB().getNickByLoginPassword(parts[1], parts[2].hashCode());
         if (nick != null) {
             if (!chatServer.isNickBusy(nick)) {
                 sendMsg(AUTHOK + " " + nick);
