@@ -69,21 +69,29 @@ public class ClientHandler {
     }
 
     public void signUpServer(String str){
-        System.out.println(str);
         String[] parts = str.split(" ");
         String login = parts[1];
         String password = parts[2];
         String nick = parts[3];
+        System.out.println("signUpServer");
         if (!chatServer.isNickBusy(nick)) {
-            if(chatServer.getAuthServiceDB().addAccount(login, password, nick)) System.out.println("Sign UP OK");
+            System.out.println("Nick is not busy");
+            if(chatServer.getAuthServiceDB().addAccount(login, password, nick)) {
+                System.out.println("Sign UP OK");
+                sendMsg(TOUSER + " " + login + " " + "Sign UP OK");
+                checkNick(AUTH + " " + login + " " + password);
+            }
+
         }
     }
 
     public void checkNick(String str) {
         String[] parts = str.split(" ");
         String nick = chatServer.getAuthServiceDB().getNickByLoginPassword(parts[1], parts[2].hashCode());
+        System.out.println("Nick: " + nick);
         if (nick != null) {
             if (!chatServer.isNickBusy(nick)) {
+                System.out.println("Nick is not busy in checkNick()");
                 sendMsg(AUTHOK + " " + nick);
                 name = nick;
                 chatServer.broadcastMsg(nick + " went into the chat");
@@ -97,15 +105,17 @@ public class ClientHandler {
 
     public void readMsg() {
         try {
-            sleep(TIMEOUT_SEC * 1000);
-            if (authorizationOk) {
-                while (authorizationOk) { // цикл получения сообщений
+            System.out.println(authorizationOk);
+          //  sleep(TIMEOUT_SEC * 1000);
+         //   if (authorizationOk) {
+                while (!socket.isClosed()) { // цикл получения сообщений
                     String str = null;
                     if (in.available() > 0) str = in.readUTF();
+                    System.out.println("readMsg() " + str);
                     if (str != null) {
                         if (str.equals(END)) {
                             authorizationOk = false;
-                            break;
+                            //break;
                         }
                         if (str.startsWith(TOUSER)) {
                             String[] messageSplit = str.split(" ", 3);
@@ -113,8 +123,8 @@ public class ClientHandler {
                         } else chatServer.broadcastMsg(name + ": " + str);
                     }
                 }
-            }
-        } catch (InterruptedException | IOException e) {
+        //    }
+        } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
 
@@ -142,11 +152,12 @@ public class ClientHandler {
     class RunnableClassReadMessage implements Runnable {
         @Override
         public void run() {
-            try {
+           // try {
                 readMsg();
-            } finally {
-                closeClient();
-            }
+          //  }
+            //finally {
+               // closeClient();
+           // }
         }
     }
 

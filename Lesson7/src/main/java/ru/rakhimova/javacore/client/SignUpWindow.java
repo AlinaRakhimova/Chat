@@ -75,6 +75,7 @@ public class SignUpWindow extends JDialog {
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
         }
+        dispose();
     }
 
     private void onCancel() {
